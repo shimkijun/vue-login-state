@@ -5,14 +5,14 @@
       <v-card style="width:100%">
         <v-alert
           class="mb-3"
-          :value="isError"
+          :value="isLoginError"
           type="error"
         >
           로그인 실패
         </v-alert>
         <v-alert
           class="mb-3"
-          :value="loginSuccess"
+          :value="isLogin"
           type="success"
         >
           로그인 완료
@@ -35,7 +35,10 @@
                 depressed
                 large
                 block
-                @click="login"
+                @click="login({
+                  email,
+                  password
+                })"
             >
                 로그인
             </v-btn>
@@ -46,35 +49,20 @@
 </template>
 
 <script>
-
+import { mapState, mapActions } from 'vuex'
 export default {
   name: 'login',
   data () {
     return {
       email: null,
-      password: null,
-      isError: false,
-      loginSuccess: false,
-      allUsers: [
-        { id: 1, name: 'tester1', email: 'example1@example.com', password: '1234' },
-        { id: 2, name: 'tester2', email: 'example2@example.com', password: '1234' }
-      ]
+      password: null
     }
   },
+  computed: {
+    ...mapState('users', ['isLogin', 'isLoginError'])
+  },
   methods: {
-    login () {
-      let selectedUser = null
-      this.allUsers.forEach(user => {
-        if (user.email === this.email) {
-          selectedUser = user
-        }
-      })
-      selectedUser === null
-        ? (this.isError = true)
-        : selectedUser.password !== this.password
-          ? (this.isError = true)
-          : (this.loginSuccess = true)
-    }
+    ...mapActions('users', ['login'])
   }
 }
 </script>
